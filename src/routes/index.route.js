@@ -1,11 +1,17 @@
 import express from "express";
-import { validationResult } from "express-validator";
 
-import { createUser, loginUser } from "../controllers/user/user.controller";
+import {
+  createUser,
+  loginUser,
+  logoutUser,
+  forgotPassword,
+  resetPassword,
+} from "../controllers/user/user.controller";
 import {
   createUserValidator,
   validatorResult,
 } from "../controllers/user/user.validator";
+import usersRoute from "./users.route";
 
 //Router
 const router = express.Router();
@@ -19,7 +25,11 @@ export default (app) => {
 
   //Authentication
   router.post("/register", createUserValidator, validatorResult, createUser);
-  // router.post("/register", createUser);
   router.post("/login", loginUser);
-  router.post("/forgot");
+  router.get("/logout", logoutUser);
+  router.put("/forgot-password", forgotPassword);
+  router.post("/reset-password/:token", resetPassword);
+
+  // router api/users
+  usersRoute(router);
 };

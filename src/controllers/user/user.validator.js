@@ -4,7 +4,7 @@ export const createUserValidator = [
   check("username")
     .not()
     .isEmpty()
-    .isLength(8)
+    .isLength(7)
     .isAlphanumeric()
     .withMessage("Username is required"),
   check("password")

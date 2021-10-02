@@ -1,3 +1,4 @@
+import moment from "moment";
 import mongoose from "mongoose";
 mongoose.Promise = global.Promise;
 
@@ -6,6 +7,8 @@ const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
+    trim: true,
+    lowercase: true,
   },
   password: {
     type: String,
@@ -14,15 +17,18 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
+    trim: true,
+    lowercase: true,
   },
   phone: {
     type: String,
     default: "",
     required: false,
+    trim: true,
   },
   created: {
     type: Date,
-    default: Date.now(),
+    default: moment().toDate(),
   },
   isActive: {
     type: Boolean,
@@ -55,6 +61,13 @@ const userSchema = new mongoose.Schema({
   changePasswordDate: {
     type: Date,
     required: false,
+  },
+  token: {
+    type: String,
+  },
+  slug: {
+    type: String,
+    require: false,
   },
 });
 
