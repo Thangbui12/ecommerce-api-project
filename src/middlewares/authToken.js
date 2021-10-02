@@ -1,26 +1,23 @@
 import jwt from "jsonwebtoken";
 
-const verifyToken = (req, res, next) => {
-  try {
-    const accessToken = req.header("jwt");
-    // console.log(token);
-    // const accessToken = token.split(" ")[1];
-    console.log(accessToken);
-    // console.log(typeof accessToken);
-    if (!accessToken) {
-      return res.status(401).json({
-        message: "Access denied",
-      });
-    }
-    // console.log(procee.env.JWT_EXPIRES_IN);
-    const user = jwt.verify(accessToken, process.env.JWT_SECRET_KEY, {
-      expiresIn: process.env.JWT_EXPIRES_IN,
+const verifyToken = async (req, res, next) => {
+  const authorization = await req.headers["authorization"];
+  const accessToken = authorization.split(" ")[1];
+  if (!accessToken) {
+    return res.status(401).json({
+      message: "Access denied",
     });
+  }
+
+  try {
+    // console.log(procee.env.JWT_EXPIRES_IN);
+    const user = jwt.verify(accessToken, process.env.JWT_SECRET_KEY);
     req.user = user;
+
     next();
   } catch (err) {
-    return res.status(404).json({
-      statusCode: 404,
+    return res.status(403).json({
+      statusCode: 403,
       message: `${err.message} Error!`,
       data: {},
     });

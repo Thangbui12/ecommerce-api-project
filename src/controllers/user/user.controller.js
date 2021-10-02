@@ -68,11 +68,11 @@ export const loginUser = async (req, res) => {
 
   const result = !!username ? { username: username } : { email: email };
 
-  console.log(result);
+  // console.log(result);
   try {
     // Check Email or Username Or Password existed
-    const user = await User.findOne({ result });
-    console.log(user.password);
+    const user = await User.findOne(result);
+    // console.log(user.password);
     // console.log(user);
     // If user or email existed
     if (!user) {
@@ -93,8 +93,12 @@ export const loginUser = async (req, res) => {
     }
 
     // If okay all send token to client
-    const token = signToken(user.id, user.email);
-    res.cookie("jwt", token, { secure: true, httpOnly: true });
+    const token = signToken({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      isAdmin: user.isAdmin,
+    });
 
     res.status(200).json({
       statusCode: 200,
@@ -104,23 +108,6 @@ export const loginUser = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(404).json({
-      statusCode: 404,
-      message: err.message,
-      data: {},
-    });
-  }
-};
-
-export const logoutUser = (req, res) => {
-  try {
-    res.cookie("jwt", "");
-    res.status(200).json({
-      statusCode: 200,
-      message: "Logout success!",
-    });
-  } catch (err) {
-    console.log(err);
     res.status(404).json({
       statusCode: 404,
       message: err.message,

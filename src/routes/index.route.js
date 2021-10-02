@@ -3,7 +3,6 @@ import express from "express";
 import {
   createUser,
   loginUser,
-  logoutUser,
   forgotPassword,
   resetPassword,
 } from "../controllers/user/user.controller";
@@ -26,7 +25,6 @@ export default (app) => {
   //Authentication
   router.post("/register", createUserValidator, validatorResult, createUser);
   router.post("/login", loginUser);
-  router.get("/logout", logoutUser);
   router.put("/forgot-password", forgotPassword);
   router.post("/reset-password/:token", resetPassword);
 
