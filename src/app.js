@@ -11,7 +11,9 @@ const app = express();
 //Morgan log
 app.use(morgan("dev"));
 
+//connect Database
 connectDB();
+
 // Set
 app.set("port", process.env.PORT);
 

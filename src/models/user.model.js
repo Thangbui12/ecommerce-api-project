@@ -30,6 +30,13 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: moment().toDate(),
   },
+  token: {
+    type: String,
+  },
+  slug: {
+    type: String,
+    require: false,
+  },
   isActive: {
     type: Boolean,
     required: true,
@@ -37,7 +44,7 @@ const userSchema = new mongoose.Schema({
   },
   isAdmin: {
     type: Boolean,
-    required: true,
+    select: true,
     default: false,
   },
   isVerify: {
@@ -61,13 +68,6 @@ const userSchema = new mongoose.Schema({
   changePasswordDate: {
     type: Date,
     required: false,
-  },
-  token: {
-    type: String,
-  },
-  slug: {
-    type: String,
-    require: false,
   },
 });
 

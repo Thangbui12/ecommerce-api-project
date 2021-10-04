@@ -28,6 +28,6 @@ export default (app) => {
   router.put("/forgot-password", forgotPassword);
   router.post("/reset-password/:token", resetPassword);
 
-  // router api/users
+  // router api/users/
   usersRoute(router);
 };

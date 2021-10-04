@@ -5,17 +5,23 @@ import slugify from "slugify";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
 import moment from "moment";
+import multer from "multer";
+import sharp from "sharp";
 
 import User from "../../models/user.model";
 import { signToken } from "../../ultils/signToken";
 import { sendEmail } from "../../ultils/sendMail";
+import QueryFeatures from "../../ultils/queryFeatures";
 
 //Authentication
 
 export const createUser = async (req, res) => {
   //get require value User
   const { username, password, email, phone, isAdmin } = await req.body;
-  // console.log(username, email);
+  //   "username": "bui hong thang 21",
+  //   "password": "password123",
+  //   "email": "buihongthang21@gmail.com//
+  // // console.log(username, email);
   // console.log(req.body);
 
   // Exist user or email handler
@@ -60,6 +66,7 @@ export const createUser = async (req, res) => {
   }
 };
 
+//login
 export const loginUser = async (req, res) => {
   let username = req.body.username,
     password = req.body.password,
@@ -119,14 +126,31 @@ export const loginUser = async (req, res) => {
 // User
 
 export const getAllUsers = async (req, res) => {
-  const users = await User.find({});
-  res.status(200).json({
-    statusCode: 200,
-    message: "Get all users successfully",
-    data: {
-      users,
-    },
-  });
+  try {
+    const features = new QueryFeatures(User.find(), req.query)
+      .filter()
+      .sort()
+      .limitfields()
+      .pagination();
+
+    //EXECUTE QUERY
+    //query.sort().select().skip().limit()
+    const users = await features.query;
+    res.status(200).json({
+      statusCode: 200,
+      total_users: users.length,
+      message: "Get all users successfully",
+      data: {
+        users,
+      },
+    });
+  } catch (err) {
+    res.status(404).json({
+      statusCode: 404,
+      message: err.message,
+      data: {},
+    });
+  }
 };
 
 export const getOneUser = async (req, res) => {
@@ -177,6 +201,7 @@ export const deleteOneUser = async (req, res) => {
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = await req.body;
+    //email = buihongthang21@gmail.com
 
     //CHeck user Exist
     const user = await User.findOne({ email: email });
@@ -224,6 +249,7 @@ export const forgotPassword = async (req, res) => {
 export const resetPassword = async (req, res) => {
   const { token } = await req.params;
   // console.log(typeof token);
+  //c1c83f051de6c263dbf2ea8e1e94f7470b3fe8c02890987124104e4829742745
 
   const { newPassword, confirmPassword } = await req.body;
 
@@ -268,6 +294,45 @@ export const resetPassword = async (req, res) => {
       user: user.username,
       password: hash,
       changed: moment().toDate(),
+    },
+  });
+};
+
+// Upload Avatar
+export const uploadAvatarUser = async (req, res) => {
+  const { id } = req.params;
+  const imgFile = await req.file;
+  if (!imgFile) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: "File Error!",
+      data: {},
+    });
+  }
+
+  if (id !== req.user.id) {
+    return res.status(405).json({
+      statusCode: 405,
+      message: "Not Allow Method",
+      data: {},
+    });
+  }
+  const filename = await req.file.filename;
+  console.log(filename);
+
+  const updateAvatarUser = await User.findByIdAndUpdate(
+    req.user.id,
+    { avatar: filename },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+  res.status(200).json({
+    statusCode: 200,
+    message: "Upload img success!",
+    data: {
+      user: updateAvatarUser,
     },
   });
 };

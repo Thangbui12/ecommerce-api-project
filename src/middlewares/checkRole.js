@@ -1,5 +1,6 @@
 export const checkAdminRole = async (req, res, next) => {
-  console.log(req.user);
+  // console.log(req.user);
+  // console.log("isAdmin? ", req.user.isAdmin);
   if (req.user.isAdmin === false) {
     return res.status(404).json({
       statusCode: 404,
