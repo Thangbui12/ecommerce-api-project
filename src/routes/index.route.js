@@ -11,6 +11,7 @@ import {
   validatorResult,
 } from "../controllers/user/user.validator";
 import usersRoute from "./users.route";
+import productRoute from "./products.route";
 
 //Router
 const router = express.Router();
@@ -28,6 +29,11 @@ export default (app) => {
   router.put("/forgot-password", forgotPassword);
   router.post("/reset-password/:token", resetPassword);
 
+  //Get all products
+
   // router api/users/
   usersRoute(router);
+
+  // router api/products/
+  productRoute(router);
 };

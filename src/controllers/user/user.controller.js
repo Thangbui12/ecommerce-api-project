@@ -1,12 +1,8 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import slugify from "slugify";
-import nodemailer from "nodemailer";
 import crypto from "crypto";
 import moment from "moment";
-import multer from "multer";
-import sharp from "sharp";
 
 import User from "../../models/user.model";
 import { signToken } from "../../ultils/signToken";
@@ -48,34 +44,38 @@ export const createUser = async (req, res) => {
       email,
       phone,
       isAdmin,
-      slug: slugify(username).toLocaleLowerCase(),
+      slug: slugify(username, { lower: true }),
     };
 
     const newUser = await User.create(userRequire);
 
     res.status(201).json({
-      status: "Created user success!",
+      statusCode: 201,
+      message: "Created user success!",
       data: {
         user: newUser,
       },
     });
   } else {
     res.status(500).json({
-      status: "Username or Email existed!",
+      statusCode: 500,
+      message: "Username or Email existed!",
+      data: {},
     });
   }
 };
 
 //login
 export const loginUser = async (req, res) => {
-  let username = req.body.username,
-    password = req.body.password,
-    email = req.body.email;
+  // let username = req.body.username,
+  //   password = req.body.password,
+  //   email = req.body.email;
+  let { username, password, email } = await req.body;
   console.log(username, password, email);
 
   const result = !!username ? { username: username } : { email: email };
 
-  // console.log(result);
+  console.log(result);
   try {
     // Check Email or Username Or Password existed
     const user = await User.findOne(result);
@@ -155,7 +155,7 @@ export const getAllUsers = async (req, res) => {
 
 export const getOneUser = async (req, res) => {
   const username = req.params.slug;
-  console.log(username);
+  // console.log(username);
   const user = await User.findOne({ username: username });
   // console.log(user);
 
@@ -225,6 +225,7 @@ export const forgotPassword = async (req, res) => {
 
     // Send Mail
     await sendEmail(email, "Reset Password", htmlTemplate);
+    //http://localhost:5035/api/reset-password/6e2414c92a0f2c3d8198feef7d05d53c269ff512f8b1bec0c0cda072efe0662d
 
     await user.updateOne({
       resetPasswordExpires: moment().add(10, "minutes").toDate(),
@@ -249,7 +250,7 @@ export const forgotPassword = async (req, res) => {
 export const resetPassword = async (req, res) => {
   const { token } = await req.params;
   // console.log(typeof token);
-  //c1c83f051de6c263dbf2ea8e1e94f7470b3fe8c02890987124104e4829742745
+  //6e2414c92a0f2c3d8198feef7d05d53c269ff512f8b1bec0c0cda072efe0662d
 
   const { newPassword, confirmPassword } = await req.body;
 
