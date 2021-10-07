@@ -18,26 +18,24 @@ const router = express.Router();
 export default (confixRouter) => {
   confixRouter.use("/products/", router);
 
-  router.post(
-    "/create-product",
-    verifyToken,
-    checkAdminRole,
-    productValidator,
-    createOneProduct
-  );
-
-  router.get("/", getAllProducts);
   router
+    .post(
+      "/create-product",
+      verifyToken,
+      checkAdminRole,
+      productValidator,
+      createOneProduct
+    )
+    .get("/", getAllProducts)
     .get("/:id", getOneProduct)
     .patch("/:id", verifyToken, checkAdminRole, updateOneProduct)
-    .delete("/:id", verifyToken, checkAdminRole, deleteOneProduct);
-
-  router.patch(
-    "/:id/upload-photos",
-    verifyToken,
-    checkAdminRole,
-    uploadProductPhoto,
-    resizeProductPhoto,
-    uploadPhotos
-  );
+    .delete("/:id", verifyToken, checkAdminRole, deleteOneProduct)
+    .patch(
+      "/:id/upload-photos",
+      verifyToken,
+      checkAdminRole,
+      uploadProductPhoto,
+      resizeProductPhoto,
+      uploadPhotos
+    );
 };

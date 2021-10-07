@@ -17,14 +17,14 @@ export default (confixRouter) => {
   confixRouter.use("/users", verifyToken, router);
 
   // localhost:5035/api/users/
-  router.get("/", checkAdminRole, getAllUsers);
-  router.get("/:slug", checkAdminRole, getOneUser);
-  router.delete("/:slug", checkAdminRole, deleteOneUser);
-
-  router.patch(
-    "/:id/upload-avatar",
-    uploadUserPhoto,
-    resizeUserPhoto,
-    uploadAvatarUser
-  );
+  router
+    .get("/", checkAdminRole, getAllUsers)
+    .get("/:slug", checkAdminRole, getOneUser)
+    .delete("/:slug", checkAdminRole, deleteOneUser)
+    .patch(
+      "/:id/upload-avatar",
+      uploadUserPhoto,
+      resizeUserPhoto,
+      uploadAvatarUser
+    );
 };

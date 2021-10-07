@@ -331,7 +331,7 @@ export const uploadAvatarUser = async (req, res) => {
   );
   res.status(200).json({
     statusCode: 200,
-    message: "Upload img success!",
+    message: "Upload img successfully!",
     data: {
       user: updateAvatarUser,
     },

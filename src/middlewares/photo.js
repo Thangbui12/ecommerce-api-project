@@ -28,6 +28,7 @@ const upload = multer({
   fileFilter: multerFilter,
 });
 
+//upload Avatar
 export const uploadUserPhoto = upload.single("avatar");
 
 export const resizeUserPhoto = async (req, res, next) => {
@@ -49,9 +50,9 @@ export const resizeUserPhoto = async (req, res, next) => {
   next();
 };
 
+//upload Images product
 export const uploadProductPhoto = upload.array("photos", 12);
 // export const uploadProductPhoto = upload.single("photos");
-
 export const resizeProductPhoto = async (req, res, next) => {
   const { id } = await req.params;
   if (!req.files) return next;
@@ -77,5 +78,28 @@ export const resizeProductPhoto = async (req, res, next) => {
       .toFile(`src/public/img/products/${id}/${el.filename}`);
   });
 
+  next();
+};
+
+//banner
+export const uploadBanner = upload.single("banner");
+export const resizeBanner = async (req, res, next) => {
+  const { id } = await req.params;
+  // console.log(id);
+  if (!req.file) return next;
+
+  req.file.filename = `category-${id}-${moment().format()}.jpeg`;
+
+  //mkdir src/public/img/users/${req.user.id}
+  if (!fs.existsSync("src/public/img/categories"))
+    fs.mkdirSync(`src/public/img/categories`);
+  if (!fs.existsSync(`src/public/img/categories/${id}`))
+    fs.mkdirSync(`src/public/img/categories/${id}`);
+
+  await sharp(req.file.buffer)
+    .resize(1000, 500)
+    .toFormat("jpeg")
+    .jpeg({ quality: 90 })
+    .toFile(`src/public/img/categories/${id}/${req.file.filename}`);
   next();
 };

@@ -12,6 +12,7 @@ import {
 } from "../controllers/user/user.validator";
 import usersRoute from "./users.route";
 import productRoute from "./products.route";
+import categoryRoute from "./category.route";
 
 //Router
 const router = express.Router();
@@ -24,16 +25,20 @@ export default (app) => {
   });
 
   //Authentication
-  router.post("/register", createUserValidator, validatorResult, createUser);
-  router.post("/login", loginUser);
-  router.put("/forgot-password", forgotPassword);
-  router.post("/reset-password/:token", resetPassword);
+  router
+    .post("/register", createUserValidator, validatorResult, createUser)
+    .post("/login", loginUser)
+    .put("/forgot-password", forgotPassword)
+    .post("/reset-password/:token", resetPassword);
 
   //Get all products
 
-  // router api/users/
+  //Router api/users/
   usersRoute(router);
 
   // router api/products/
   productRoute(router);
+
+  // category api/categories/
+  categoryRoute(router);
 };

@@ -20,6 +20,11 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  categories: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category",
+    required: true,
+  },
   weight: {
     type: Number,
     required: true,

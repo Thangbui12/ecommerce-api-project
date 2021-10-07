@@ -6,8 +6,17 @@ import QueryFeatures from "../../ultils/queryFeatures";
 
 //Create one product
 export const createOneProduct = async (req, res) => {
-  const { name, price, barcode, weight, image, quantity, description, brand } =
-    await req.body;
+  const {
+    name,
+    price,
+    barcode,
+    category,
+    weight,
+    images,
+    quantity,
+    description,
+    brand,
+  } = await req.body;
 
   // check product existed barcode existed
   const productNameExisted = await Product.findOne({ name });
@@ -20,6 +29,7 @@ export const createOneProduct = async (req, res) => {
       slug: slugify(name, { lower: true }),
       price,
       barcode,
+      category,
       weight,
       quantity,
       description,
@@ -54,7 +64,7 @@ export const getAllProducts = async (req, res) => {
       .pagination();
 
     //Execute query
-    const products = await features.query;
+    const products = await features.query.populate("category");
     res.status(200).json({
       statusCode: 200,
       totalProducts: products.length,
@@ -77,6 +87,13 @@ export const getOneProduct = async (req, res) => {
   const { id } = req.params;
   try {
     const product = await Product.findById({ _id: id });
+    if (!product) {
+      return res.status(404).json({
+        statusCode: 404,
+        message: "Product not existed!",
+        data: {},
+      });
+    }
 
     res.status(200).json({
       statusCode: 200,
@@ -157,10 +174,10 @@ export const uploadPhotos = async (req, res) => {
     });
   }
 
-  if (!req.user.id) {
+  if (!id) {
     return res.status(405).json({
       statusCode: 405,
-      message: "Login required for uploading",
+      message: "Product not existed!",
       data: {},
     });
   }
