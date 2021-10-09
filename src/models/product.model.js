@@ -47,6 +47,11 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  flashSale: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "FlashSale",
+    required: false,
+  },
 });
 
 // productSchema.pre("save", function (next) {

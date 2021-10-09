@@ -10,7 +10,7 @@ export const createOneProduct = async (req, res) => {
     name,
     price,
     barcode,
-    category,
+    categories,
     weight,
     images,
     quantity,
@@ -29,7 +29,7 @@ export const createOneProduct = async (req, res) => {
       slug: slugify(name, { lower: true }),
       price,
       barcode,
-      category,
+      categories,
       weight,
       quantity,
       description,
@@ -64,7 +64,21 @@ export const getAllProducts = async (req, res) => {
       .pagination();
 
     //Execute query
-    const products = await features.query.populate("category");
+    const products = await features.query
+      .populate({
+        path: "categories",
+        select: ["name", "position", "banner", "isActive"],
+      })
+      .populate({
+        path: "flashSale",
+        select: [
+          "quantity",
+          "discountPercent",
+          "timeStart",
+          "duration",
+          "timeEnd",
+        ],
+      });
     res.status(200).json({
       statusCode: 200,
       totalProducts: products.length,
@@ -115,7 +129,7 @@ export const getOneProduct = async (req, res) => {
 export const updateOneProduct = async (req, res) => {
   const { id } = await req.params;
   const { ...productParams } = await req.body;
-  console.log(productParams);
+  // console.log(productParams);
 
   //Check product existed
   const product = await Product.findById({ _id: id });

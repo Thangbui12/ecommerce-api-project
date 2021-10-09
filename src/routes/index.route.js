@@ -13,6 +13,8 @@ import {
 import usersRoute from "./users.route";
 import productRoute from "./products.route";
 import categoryRoute from "./category.route";
+import orderRoute from "./order.route";
+import flashSaleRoute from "./flashSale.route";
 
 //Router
 const router = express.Router();
@@ -41,4 +43,10 @@ export default (app) => {
 
   // category api/categories/
   categoryRoute(router);
+
+  // Order api/orders/
+  orderRoute(router);
+
+  // FlashSale api/flash-sales/
+  flashSaleRoute(router);
 };
