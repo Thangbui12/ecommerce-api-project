@@ -27,7 +27,7 @@ class QueryFeatures {
       const sortBy = this.queryString.sort.split(",").join(" ");
       this.query = this.query.sort(sortBy);
     } else {
-      this.query = this.query.sort("-created");
+      this.query = this.query.sort("-createdAt");
     }
 
     return this;

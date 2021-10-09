@@ -1,6 +1,6 @@
 import mongoose, { Query } from "mongoose";
 import moment from "moment";
-import _, { lowerFirst, rearg } from "lodash";
+import _ from "lodash";
 
 import FlashSale from "../../models/flashSale.model";
 import Product from "../../models/product.model";
@@ -15,10 +15,11 @@ export const createFlashSale = async (req, res) => {
   //duration : 2days-2d 20minutes-20m 20seconds-20s 2hours-2h 2months-2M 2years-2y Quanter-Q
   //moment('24/12/2019 09:15:00', "DD MM YYYY hh:mm:ss", true);
   // console.log(duration);
+
   const timeStartCoverted = await moment(timeStart);
   const timeEndConverted = await timeStartCoverted.add(
-    duration.charAt(0),
-    duration.charAt(1)
+    _.split(duration, "", 2)[0],
+    _.split(duration, "", 2)[1]
   );
   // console.log(timeEndConverted);
   //Check product Id existed in another flashSale

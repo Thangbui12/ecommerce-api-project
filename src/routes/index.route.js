@@ -15,7 +15,7 @@ import productRoute from "./products.route";
 import categoryRoute from "./category.route";
 import orderRoute from "./order.route";
 import flashSaleRoute from "./flashSale.route";
-
+import voucherRoute from "./voucher.route";
 //Router
 const router = express.Router();
 
@@ -49,4 +49,7 @@ export default (app) => {
 
   // FlashSale api/flash-sales/
   flashSaleRoute(router);
+
+  // Voucher api/vouchers/
+  voucherRoute(router);
 };

@@ -52,6 +52,10 @@ const productSchema = new mongoose.Schema({
     ref: "FlashSale",
     required: false,
   },
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
 });
 
 // productSchema.pre("save", function (next) {
