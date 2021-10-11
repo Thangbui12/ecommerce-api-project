@@ -21,7 +21,7 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         default: 0,
       },
-      price: {
+      totalItemPrice: {
         type: Number,
         default: 0,
       },
@@ -30,32 +30,31 @@ const orderSchema = new mongoose.Schema({
       },
     },
   ],
-
+  voucher: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Voucher",
+  },
   adress: {
     type: String,
     require: true,
   },
-  createAt: {
-    type: Date,
-    default: Date.now(),
-  },
   delivered: {
     type: Boolean,
     default: false,
-  },
-  voucher: {
-    type: String,
-    required: false,
   },
   totalQuantity: {
     type: Number,
     default: 0,
     required: true,
   },
-  totalCost: {
+  totalCostOrder: {
     type: Number,
     default: 0,
     required: true,
+  },
+  createAt: {
+    type: Date,
+    default: Date.now(),
   },
 });
 

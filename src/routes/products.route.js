@@ -9,7 +9,7 @@ import {
   deleteOneProduct,
 } from "../controllers/product/product.controller";
 import { productValidator } from "../controllers/product/product.validator";
-import verifyToken from "../middlewares/authToken";
+import { verifyToken } from "../middlewares/authToken";
 import { checkAdminRole } from "../middlewares/checkRole";
 import { resizeProductPhoto, uploadProductPhoto } from "../middlewares/photo";
 

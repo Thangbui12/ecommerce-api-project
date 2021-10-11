@@ -8,7 +8,7 @@ import {
   deleteOneCategory,
   uploadCategoryBanner,
 } from "../controllers/category/category.controller";
-import verifyToken from "../middlewares/authToken";
+import { verifyToken } from "../middlewares/authToken";
 import { checkAdminRole } from "../middlewares/checkRole";
 import { resizeBanner, uploadBanner } from "../middlewares/photo";
 

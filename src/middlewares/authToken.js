@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-const verifyToken = async (req, res, next) => {
+export const verifyToken = async (req, res, next) => {
   const authorization = await req.headers["authorization"];
   const accessToken = authorization.split(" ")[1];
   if (!accessToken) {
@@ -23,4 +23,3 @@ const verifyToken = async (req, res, next) => {
     });
   }
 };
-export default verifyToken;

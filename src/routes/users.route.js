@@ -6,7 +6,7 @@ import {
   deleteOneUser,
   uploadAvatarUser,
 } from "../controllers/user/user.controller";
-import verifyToken from "../middlewares/authToken";
+import { verifyToken } from "../middlewares/authToken";
 import { checkAdminRole } from "../middlewares/checkRole";
 import { resizeUserPhoto, uploadUserPhoto } from "../middlewares/photo";
 

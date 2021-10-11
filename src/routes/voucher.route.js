@@ -7,11 +7,13 @@ import {
   updateOneVoucher,
   deleteOneVoucher,
 } from "../controllers/voucher/voucher.controller";
+import { verifyToken } from "../middlewares/authToken";
+import { checkAdminRole } from "../middlewares/checkRole";
 
 const router = express.Router();
 
 export default (confixRouter) => {
-  confixRouter.use("/vouchers", router);
+  confixRouter.use("/vouchers", verifyToken, checkAdminRole, router);
 
   router
     .post("/create-voucher", createVoucher)

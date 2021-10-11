@@ -197,7 +197,7 @@ export const uploadPhotos = async (req, res) => {
   }
 
   const filenames = [];
-  imgFile.forEach((el, index) => {
+  await imgFile.forEach((el, index) => {
     filenames.push(el.filename);
   });
   // console.log(filenames);
