@@ -1,132 +1,33 @@
-import moment from "moment";
-import mongoose from "mongoose";
-
-import Voucher from "../../models/voucher.model";
-import QueryFeatures from "../../ultils/queryFeatures";
+import {
+  createVoucherService,
+  deleteOneVoucherService,
+  getAllVoucherService,
+  getOneVoucherService,
+  updateOneVoucherService,
+} from "../../services/voucher.service";
 
 export const createVoucher = async (req, res) => {
-  const { ...voucherParams } = await req.body;
-
-  const voucherCodeExisted = await Voucher.findOne({
-    code: voucherParams.code,
-  });
-  if (
-    await (moment(voucherParams.timeStart) >= moment(voucherParams.timeEnd))
-  ) {
-    return res.status(500).json({
-      statusCode: 500,
-      message: "Time Expires Incorrect!",
-      data: {},
-    });
-  }
-  if (!!voucherCodeExisted) {
-    return res.status(500).json({
-      statusCode: 500,
-      message: "Voucher Existed!",
-      data: {},
-    });
-  }
-  const voucherRequired = {
-    _id: mongoose.Types.ObjectId(),
-    ...voucherParams,
-  };
-
-  const newVoucher = await Voucher.create(voucherRequired);
-
-  res.status(201).json({
-    statusCode: 201,
-    message: "Created voucher success!",
-    data: {
-      product: newVoucher,
-    },
-  });
+  const { statusCode, message, data } = await createVoucherService(req);
+  return res.status(statusCode).json({ message, data });
 };
 
 //getAllVoucher
 export const getAllVoucher = async (req, res) => {
-  try {
-    const features = new QueryFeatures(Voucher.find(), req.query)
-      .filter()
-      .sort()
-      .limitfields()
-      .pagination();
-
-    //Excute query
-    const vouchers = await features.query;
-
-    res.status(200).json({
-      statusCode: 200,
-      totalProducts: vouchers.length,
-      message: "Get all vouchers successfully",
-      data: {
-        vouchers,
-      },
-    });
-  } catch (err) {
-    res.status(404).json({
-      statusCode: 404,
-      message: err.message,
-      data: {},
-    });
-  }
+  const { statusCode, message, data } = await getAllVoucherService(req);
+  return res.status(statusCode).json({ message, data });
 };
 
 export const getOneVoucher = async (req, res) => {
-  const { id } = await req.params;
-
-  const voucher = await Voucher.findById({ _id: id });
-  if (!voucher) {
-    return res.status(404).json({
-      statusCode: 404,
-      message: "Voucher not existed!",
-      data: {},
-    });
-  }
-  res.status(200).json({
-    statusCode: 200,
-    message: "Get Voucher successfully",
-    data: {
-      voucher,
-    },
-  });
+  const { statusCode, message, data } = await getOneVoucherService(req);
+  return res.status(statusCode).json({ message, data });
 };
 
 export const updateOneVoucher = async (req, res) => {
-  const { id } = await req.params;
-  const { ...voucherParams } = await req.body;
-
-  const voucher = await Voucher.findById({ _id: id });
-  if (!voucher) {
-    return res.status(404).json({
-      statusCode: 404,
-      message: "Voucher not existed!",
-      data: {},
-    });
-  }
-
-  await Voucher.updateOne(voucherParams);
-  res.status(200).json({
-    statusCode: 200,
-    message: "Updated Voucher successfully",
-    data: {
-      updated: voucherParams,
-    },
-  });
+  const { statusCode, message, data } = await updateOneVoucherService(req);
+  return res.status(statusCode).json({ message, data });
 };
 
 export const deleteOneVoucher = async (req, res) => {
-  const { id } = await req.params;
-  const voucher = await Voucher.findById({ _id: id });
-  if (!voucher) {
-    return res.status(404).json({
-      statusCode: 404,
-      message: "Voucher not existed!",
-      data: {},
-    });
-  }
-  await voucher.delete();
-  res.status(200).json({
-    statusCode: 200,
-    message: "Delete voucher successfully",
-  });
+  const { statusCode, message } = await deleteOneVoucherService(req);
+  return res.status(statusCode).json({ message });
 };

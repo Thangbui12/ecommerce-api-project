@@ -17,7 +17,6 @@ class QueryFeatures {
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
 
     this.query = this.query.find(JSON.parse(queryStr));
-    console.log(this);
     return this;
   }
   sort() {
@@ -52,7 +51,6 @@ class QueryFeatures {
     const skip = (page - 1) * limit;
     this.query = this.query.skip(skip).limit(limit);
 
-    console.log(this);
     return this;
   }
 }
