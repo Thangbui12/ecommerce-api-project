@@ -7,6 +7,7 @@ import {
   updateOneFlashSale,
   deleteOneFlashSale,
 } from "../controllers/flashSale/flashSale.controller";
+import { createFlashSaleValidator } from "../controllers/flashSale/flashSale.validator";
 import { verifyToken } from "../middlewares/authToken";
 import { checkAdminRole } from "../middlewares/checkRole";
 
@@ -16,7 +17,7 @@ export default (confixRouter) => {
   confixRouter.use("/flash-sales", verifyToken, checkAdminRole, router);
 
   router
-    .post("/create-flash-sale", createFlashSale)
+    .post("/create-flash-sale", createFlashSaleValidator, createFlashSale)
     .get("/", getAllFlashSale)
     .get("/:id", getOneFlashSale)
     .patch("/:id", updateOneFlashSale)

@@ -7,6 +7,7 @@ import {
   updateOneVoucher,
   deleteOneVoucher,
 } from "../controllers/voucher/voucher.controller";
+import { createVoucherValidator } from "../controllers/voucher/voucher.validator";
 import { verifyToken } from "../middlewares/authToken";
 import { checkAdminRole } from "../middlewares/checkRole";
 
@@ -16,7 +17,7 @@ export default (confixRouter) => {
   confixRouter.use("/vouchers", verifyToken, checkAdminRole, router);
 
   router
-    .post("/create-voucher", createVoucher)
+    .post("/create-voucher", createVoucherValidator, createVoucher)
     .get("/", getAllVoucher)
     .get("/:id", getOneVoucher)
     .patch("/:id", updateOneVoucher)

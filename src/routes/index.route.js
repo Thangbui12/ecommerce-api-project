@@ -6,10 +6,7 @@ import {
   forgotPassword,
   resetPassword,
 } from "../controllers/user/user.controller";
-import {
-  createUserValidator,
-  validatorResult,
-} from "../controllers/user/user.validator";
+import { createUserValidator } from "../controllers/user/user.validator";
 import usersRoute from "./users.route";
 import productRoute from "./products.route";
 import categoryRoute from "./category.route";
@@ -28,7 +25,7 @@ export default (app) => {
 
   //Authentication
   router
-    .post("/register", createUserValidator, validatorResult, createUser)
+    .post("/register", createUserValidator, createUser)
     .post("/login", loginUser)
     .put("/forgot-password", forgotPassword)
     .post("/reset-password/:token", resetPassword);

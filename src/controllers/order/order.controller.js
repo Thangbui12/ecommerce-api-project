@@ -113,10 +113,10 @@ export const createOrder = async (req, res) => {
       //   return n === 0;
       // });
       // console.log(newItems);
-      const totalQuantity = await newItems.reduce((total, amout) => {
+      const totalQuantity = newItems.reduce((total, amout) => {
         return total + amout.quantity;
       }, 0);
-      const totalCostOrder = await newItems.reduce((total, amout) => {
+      const totalCostOrder = newItems.reduce((total, amout) => {
         return total + amout.totalItemPrice;
       }, -voucherOrder.discount * 1);
       // console.log(totalQuantity);
@@ -141,7 +141,6 @@ export const createOrder = async (req, res) => {
         totalQuantity,
         totalCostOrder,
       };
-      // console.log(orderRequired);
       const newOrder = await Order.create(orderRequired);
       res.status(201).json({
         statusCode: 201,
@@ -152,9 +151,102 @@ export const createOrder = async (req, res) => {
       });
     }
   } catch (err) {
-    res.status(404).json({
-      statusCode: 404,
+    res.status(500).json({
+      statusCode: 500,
       message: err.message,
     });
   }
+};
+
+// Get All Order
+export const getAllOrder = async (req, res) => {
+  try {
+    const features = new QueryFeatures(Order.find(), req.query)
+      .filter()
+      .sort()
+      .limitfields()
+      .pagination();
+
+    //Execute query
+    const order = await features.query;
+    res.status(200).json({
+      statusCode: 200,
+      totalOrders: order.length,
+      message: "Get all orders successfully",
+      data: {
+        order,
+      },
+    });
+  } catch (err) {
+    res.status(404).json({
+      statusCode: 404,
+      message: err.message,
+      data: {},
+    });
+  }
+};
+
+export const getOneOrder = async (req, res) => {
+  const { id } = req.params;
+
+  const order = await Order.findById({ _id: id });
+  if (!order) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: "Order not existed!",
+      data: {},
+    });
+  }
+
+  res.status(200).json({
+    statusCode: 200,
+    message: "Get order successfully",
+    data: {
+      order,
+    },
+  });
+};
+
+export const updateOneOrder = async (req, res) => {
+  const { id } = await req.params;
+  const { ...orderParams } = await req.body;
+
+  const order = await Order.findById({ _id: id });
+
+  if (!order) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: "Order not existed!",
+      data: {},
+    });
+  }
+
+  await order.updateOne(orderParams);
+  res.status(200).json({
+    statusCode: 200,
+    message: "Updated product successfully",
+    data: {
+      updated: orderParams,
+    },
+  });
+};
+
+export const deleteOneOrder = async (req, res) => {
+  const { id } = req.params;
+
+  const order = await Order.findById({ _id: id });
+
+  if (!order) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: "Order not existed!",
+      data: {},
+    });
+  }
+
+  await order.delete();
+  res.status(200).json({
+    statusCode: 200,
+    message: "Delete order successfully",
+  });
 };

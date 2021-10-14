@@ -56,5 +56,4 @@ class QueryFeatures {
     return this;
   }
 }
-
-module.exports = QueryFeatures;
+export default QueryFeatures;

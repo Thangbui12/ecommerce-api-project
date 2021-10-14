@@ -5,6 +5,7 @@ import _ from "lodash";
 import FlashSale from "../../models/flashSale.model";
 import Product from "../../models/product.model";
 import QueryFeatures from "../../ultils/queryFeatures";
+import { sendMailCron } from "../../ultils/cron-job";
 
 export const createFlashSale = async (req, res) => {
   const { name, productId, quantity, discountPercent, timeStart, duration } =
@@ -74,6 +75,8 @@ export const createFlashSale = async (req, res) => {
         };
       })
     );
+
+    sendMailCron();
 
     res.status(200).json({
       statusCode: 200,

@@ -224,7 +224,7 @@ export const forgotPassword = async (req, res) => {
     `;
 
     // Send Mail
-    await sendEmail(email, "Reset Password", htmlTemplate);
+    sendEmail(email, "Reset Password", htmlTemplate);
     //http://localhost:5035/api/reset-password/6e2414c92a0f2c3d8198feef7d05d53c269ff512f8b1bec0c0cda072efe0662d
 
     await user.updateOne({

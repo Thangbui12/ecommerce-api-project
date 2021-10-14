@@ -9,4 +9,4 @@ class CatchError extends Error {
   }
 }
 
-module.exports = CatchError;
+export default CatchError;
