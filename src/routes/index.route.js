@@ -24,6 +24,7 @@ export default (app) => {
   });
 
   //Authentication
+
   router
     .post("/register", createUserValidator, createUser)
     .post("/login", loginUser)

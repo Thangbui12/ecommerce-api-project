@@ -1,0 +1,25 @@
+schemas:
+  User:
+    type: object
+    properties:
+      id:
+        type: string
+      username:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      isAdmin:
+        type: boolean
+    example:
+      username: username
+      email: example@example.com
+      password: password123
+      phone: 123456789
+    xml:
+      name: User
+      
+      

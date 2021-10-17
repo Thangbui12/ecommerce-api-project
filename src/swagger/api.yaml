@@ -1,0 +1,1212 @@
+openapi: 3.0.1
+info:
+  title: Swagger Ecommerce API's Custommer
+  description: "This is Api's custommer Service"
+  contact:
+    email: buihongthang12@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+Authorization: Bearer <token>
+servers:
+- url: http://localhost:5035
+- url: http://undefinedShop.com
+tags:
+- name: Authentication
+  description: Register Login Logout
+- name: User
+  description: Operations about Users
+- name: Category
+  description: Operations about Categories
+- name: Product
+  description: Operations about Products
+- name: Order
+  description: Operations about Orders
+- name: Flash Sale
+  description: Operations about Flash Sales
+- name: Voucher
+  description: Operations about Vouchers
+
+
+paths:
+  /api/register:
+    post:
+      tags:
+        - Authentication
+      summary: Create a new user
+      description: Create a new user.
+      operationId: createUser
+      requestBody:
+        description: Created user object
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/User'
+        require: true
+      responses:
+        201:
+          $ref: '#responses/201'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-codegen-request-body-name: body
+      x-swagger-router-controller: User
+
+  /api/login:
+    post:
+      tags:
+      - Authentication
+      summary: Log in
+      description: Login user
+      operationId: loginUser
+      requestBody:
+        description: Username & password required!
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/login'
+      responses:
+        "200":
+          description: successful operation
+          headers:
+            Set-Cookie:
+              type: string
+              description: The session cookie
+            X-Rate-Limit:
+              description: calls per hour allowed by the user
+              style: simple
+              explode: false
+              schema:
+                type: integer
+                format: int32
+            X-Expires-After:
+              description: date in UTC when token expires
+              style: simple
+              explode: false
+              schema:
+                type: string
+                format: date-time
+          content:
+            application/json:
+              schema:
+                type: string
+        "400":
+          description: Invalid username/password supplied
+          content: {}
+      x-swagger-router-controller: User
+      x-codegen-request-body-name: body
+  
+  /api/forgot-password:
+    put:
+      tags: 
+        - Authentication
+      summary: Forgot password
+      description: Forgot password email send to request email
+      operationId: forgotPassword
+      requestBody:
+        description: Email required!
+        content:
+          application/json:
+            schema:
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  minLength: 1
+      responses:
+        200:
+          $ref: '#responses/200'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: User
+      x-codegen-request-body-name: body
+
+  /api/reset-password/:token:
+    post:
+      tags:
+        - Authentication
+      summary: Reset password
+      description: Reset password 
+      operationId: resetPassword
+      parameters:
+        - name: token
+          in: query
+          description: Input token
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Email required!
+        content:
+          application/json:
+            schema:
+              
+              required: [password, confirmPassword]
+              properties:
+                password:
+                  type: string
+                  minLength: 1
+                confirmPassword:
+                  type: string
+                  minLength: 1
+      responses:
+        200:
+          $ref: '#responses/200'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: User
+      x-codegen-request-body-name: body
+
+#User
+
+  /api/users:
+    get:
+      tags:
+        - User
+      summary: Return all users [RoleAdmin]
+      operationId: getAllUsers
+      description: Only the 'Admin' user can access this
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          $ref: '#responses/200'
+        404:
+          $ref: '#responses/404'
+        401:
+          $ref: '#responses/UnauthorizedError'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: User
+      x-codegen-request-body-name: body
+        
+  /api/users/{username}:
+    get:
+      tags:
+      - User
+      security:
+        - bearerAuth: []
+      summary: Get user by user name
+      operationId: getOneUser
+      parameters:
+      - name: username
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        200:
+          $ref: '#responses/200'
+        400:
+          $ref: '#responses/400'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: User
+      x-codegen-request-body-name: body
+      
+    delete:
+      tags:
+      - User
+      security:
+        - bearerAuth: []
+      summary: Delete User [Role Admin]
+      description: Only Admin user can access this
+      operationId: deleteOneUser
+      parameters:
+      - name: username
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        200:
+          $ref: '#responses/200'
+        400:
+          $ref: '#responses/400'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: User
+      x-codegen-request-body-name: body
+      
+  /api/users/{id}/upload-avatar:
+    patch:
+      tags:
+      - User
+      security:
+        - bearerAuth: []
+      summary: Upload User's avatar 
+      description: Put id of user
+      operationId: uploadAvatarUser
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                avatar:
+                  type: string
+                  format: binary
+                  required: true
+      
+      responses:
+        200:
+          $ref: '#responses/200'
+        400:
+          $ref: '#responses/400'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: User
+      x-codegen-request-body-name: body
+
+  # Category
+
+  /api/categories/create-category:
+    post:
+      tags:
+      - Category
+      security:
+        - bearerAuth: []
+      summary: Create category [Role Admin] 
+      description: Only admin 
+      operationId: createCategory
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required: [name]
+              properties:
+                name:
+                  type: string
+                  minLength: 2
+      responses:
+        201:
+          $ref: '#responses/201'
+        400:
+          $ref: '#responses/400'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Category
+      x-codegen-request-body-name: body
+
+  /api/categories:
+    get:
+      tags:
+        - Category
+      summary: Return all categories [RoleAdmin]
+      operationId: getAllCategory
+      description: Only the 'Admin' user can access this
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          $ref: '#responses/200'
+        404:
+          $ref: '#responses/404'
+        401:
+          $ref: '#responses/UnauthorizedError'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Category
+      x-codegen-request-body-name: body
+
+  /api/categories/{id}:
+    get:
+      tags:
+      - Category
+      security:
+        - bearerAuth: []
+      summary: Get category by Id [Role Admin]
+      operationId: getOneCategory
+      parameters:
+      - name: Category id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        200:
+          $ref: '#responses/200'
+        400:
+          $ref: '#responses/400'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Category
+      x-codegen-request-body-name: body
+    
+    patch:
+      tags:
+      - Category
+      security:
+        - bearerAuth: []
+      summary: Update category by Id [Role Admin]
+      operationId: updateOneCategory
+      parameters:
+      - name: Category id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required: [name]
+              properties:
+                name:
+                  type: string
+                  minLength: 2
+      responses:
+        200:
+          $ref: '#responses/200'
+        400:
+          $ref: '#responses/400'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Category
+      x-codegen-request-body-name: body
+    
+    delete:
+      tags:
+      - Category
+      security:
+        - bearerAuth: []
+      summary: Delete category by Id [Role Admin]
+      operationId: deleteOneCategory
+      parameters:
+      - name: Category id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        200:
+          $ref: '#responses/200'
+        400:
+          $ref: '#responses/400'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Category
+      x-codegen-request-body-name: body
+
+  /api/categories/upload-banner/{id}:
+    patch:
+      tags:
+      - Category
+      security:
+        - bearerAuth: []
+      summary: Upload banner's category by Id [Role Admin]
+      operationId: uploadCategoryBanner
+      parameters:
+      - name: Category id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                banner:
+                  type: string
+                  format: binary
+                  required: true
+      
+      responses:
+        200:
+          $ref: '#responses/200'
+        400:
+          $ref: '#responses/400'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Category
+      x-codegen-request-body-name: body
+        
+
+  ###PRODUCT###
+
+  /api/products/create-product:
+    post:
+      tags:
+      - Product
+      security:
+        - bearerAuth: []
+      summary: Create Product [Role Admin] 
+      description: Only the 'Admin' user can access this
+      operationId: createProduct
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required: [name, price, barcode, weight, quantity, description]
+              $ref: '#components/schemas/Product'
+                
+      responses:
+        201:
+          $ref: '#responses/201'
+        400:
+          $ref: '#responses/400'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Product
+      x-codegen-request-body-name: body
+  
+  /api/products:
+    get:
+      tags:
+        - Product
+      summary: Return all Products 
+      operationId: getAllProducts
+      description: Only the 'Admin' user can access this
+      responses:
+        200:
+          $ref: '#responses/200'
+        404:
+          $ref: '#responses/404'
+        401:
+          $ref: '#responses/UnauthorizedError'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Product
+      x-codegen-request-body-name: body
+
+  /api/products/{id}:
+    get:
+      tags:
+      - Product
+      summary: Get product by Id 
+      operationId: getOneProduct
+      parameters:
+      - name: Product id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        200:
+          $ref: '#responses/200'
+        400:
+          $ref: '#responses/400'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Product
+      x-codegen-request-body-name: body
+
+    patch:
+      tags:
+      - Product
+      security:
+        - bearerAuth: []
+      summary: Update Product by Id [Role Admin]
+      operationId: updateOneCategory
+      parameters:
+      - name: Category id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: Can update one of properties's schema
+              $ref: '#components/schemas/Product'
+      responses:
+        200:
+          $ref: '#responses/200'
+        400:
+          $ref: '#responses/400'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Product
+      x-codegen-request-body-name: body
+    
+    delete:
+      tags:
+      - Product
+      security:
+        - bearerAuth: []
+      summary: Delete product by Id [Role Admin]
+      operationId: deleteOneProduct
+      parameters:
+      - name: Product id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        200:
+          $ref: '#responses/200'
+        400:
+          $ref: '#responses/400'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Product
+      x-codegen-request-body-name: body
+
+  /api/products/{id}/upload-photos:
+    patch:
+      tags:
+      - Product
+      security:
+        - bearerAuth: []
+      summary: Upload Photos Product by Id [Role Admin]
+      operationId: uploadProductPhotos
+      parameters:
+      - name: Product id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                photos:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      
+      responses:
+        200:
+          $ref: '#responses/200'
+        400:
+          $ref: '#responses/400'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Product
+      x-codegen-request-body-name: body
+
+
+  ###ORDER###
+
+  /api/orders/create-order:
+    post:
+      tags:
+      - Order
+      security:
+        - bearerAuth: []
+      summary: Create Order
+      operationId: createOrder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required: [items, address]
+              $ref: '#components/schemas/Order'
+    
+      responses:
+        201:
+          $ref: '#responses/201'
+        400:
+          $ref: '#responses/400'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Order
+      x-codegen-request-body-name: body
+  
+  /api/orders:
+    get:
+      tags:
+        - Order
+      security:
+        - bearerAuth: []
+      summary: Return all Orders [Role Admin]
+      operationId: getAllOrders
+      security:
+        - bearerAuth: []
+      description: Only the 'Admin' user can access this
+      responses:
+        200:
+          $ref: '#responses/200'
+        404:
+          $ref: '#responses/404'
+        401:
+          $ref: '#responses/UnauthorizedError'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Order
+      x-codegen-request-body-name: body
+
+  /api/orders/{id}:
+    get:
+      tags:
+      - Order
+      security:
+        - bearerAuth: []
+      summary: Get Order by Id [Role Admin]
+      operationId: getOneOrder
+      parameters:
+      - name: Order id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        200:
+          $ref: '#responses/200'
+        400:
+          $ref: '#responses/400'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Order
+      x-codegen-request-body-name: body
+
+    patch:
+      tags:
+      - Order
+      security:
+        - bearerAuth: []
+      summary: Update Product by Id [Role Admin]
+      operationId: updateOneOrder
+      parameters:
+      - name: Order id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: Can update one of properties's schema
+              $ref: '#components/schemas/Order'
+      responses:
+        200:
+          $ref: '#responses/200'
+        400:
+          $ref: '#responses/400'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Order
+      x-codegen-request-body-name: body
+    
+    delete:
+      tags:
+      - Order
+      security:
+        - bearerAuth: []
+      summary: Delete Order by Id [Role Admin]
+      operationId: deleteOneOrder
+      parameters:
+      - name: Order id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        200:
+          $ref: '#responses/200'
+        400:
+          $ref: '#responses/400'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Order
+      x-codegen-request-body-name: body
+
+
+
+  ###Flash Sale###
+  /api/flash-sales/reate-flash-sale:
+    post:
+      tags:
+      - Flash Sale
+      security:
+        - bearerAuth: []
+      summary: Create Flash Sale [Role Admin]
+      operationId: createFlashSale
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required: [name, productId, quantity, discountPercent, timeStart, duration]
+              $ref: '#components/schemas/FlashSale'
+    
+      responses:
+        201:
+          $ref: '#responses/201'
+        400:
+          $ref: '#responses/400'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Flash Sale
+      x-codegen-request-body-name: body
+  
+  /api/flash-sales:
+    get:
+      tags:
+        - Flash Sale
+      security:
+        - bearerAuth: []
+      summary: Return all Flash Sales [Role Admin]
+      operationId: getAllFlashSales
+      security:
+        - bearerAuth: []
+      description: Only the 'Admin' user can access this
+      responses:
+        200:
+          $ref: '#responses/200'
+        404:
+          $ref: '#responses/404'
+        401:
+          $ref: '#responses/UnauthorizedError'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Flash Sale
+      x-codegen-request-body-name: body
+
+  /api/flash-sales/{id}:
+    get:
+      tags:
+      - Flash Sale
+      security:
+        - bearerAuth: []
+      summary: Get Flash Sale by Id [Role Admin]
+      operationId: getOneFlashSale
+      parameters:
+      - name: Flash Sale id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        200:
+          $ref: '#responses/200'
+        400:
+          $ref: '#responses/400'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Flash Sale
+      x-codegen-request-body-name: body
+
+    patch:
+      tags:
+      - Flash Sale
+      security:
+        - bearerAuth: []
+      summary: Update Flash Sale by Id [Role Admin]
+      operationId: updateOneFlashSale
+      parameters:
+      - name: Flash Sale id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: Can update one of properties's schema
+              $ref: '#components/schemas/FlashSale'
+      responses:
+        200:
+          $ref: '#responses/200'
+        400:
+          $ref: '#responses/400'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Flash Sale
+      x-codegen-request-body-name: body
+    
+    delete:
+      tags:
+      - Flash Sale
+      security:
+        - bearerAuth: []
+      summary: Delete one Flash Sale by Id [Role Admin]
+      operationId: deleteOneFlashSale
+      parameters:
+      - name: Flash sale id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        200:
+          $ref: '#responses/200'
+        400:
+          $ref: '#responses/400'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Flash Sale
+      x-codegen-request-body-name: body
+
+### VOUCHER ###
+
+  /api/vouchers/create-voucher:
+    post:
+      tags:
+      - Voucher
+      security:
+        - bearerAuth: []
+      summary: Create Voucher [Role Admin]
+      operationId: createVoucher
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required: [code, quantity, discount, timeStart, timeEnd]
+              $ref: '#components/schemas/Voucher'
+    
+      responses:
+        201:
+          $ref: '#responses/201'
+        400:
+          $ref: '#responses/400'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Flash Sale
+      x-codegen-request-body-name: body
+  
+  /api/vouchers:
+    get:
+      tags:
+        - Voucher
+      security:
+        - bearerAuth: []
+      summary: Return all Vouchers [Role Admin]
+      operationId: getAllVouchers
+      security:
+        - bearerAuth: []
+      description: Only the 'Admin' user can access this
+      responses:
+        200:
+          $ref: '#responses/200'
+        404:
+          $ref: '#responses/404'
+        401:
+          $ref: '#responses/UnauthorizedError'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Voucher
+      x-codegen-request-body-name: body
+
+  /api/vouchers/{id}:
+    get:
+      tags:
+      - Voucher
+      security:
+        - bearerAuth: []
+      summary: Get Voucher by Id [Role Admin]
+      operationId: getOneVoucher
+      parameters:
+      - name: Voucher id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        200:
+          $ref: '#responses/200'
+        400:
+          $ref: '#responses/400'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Voucher
+      x-codegen-request-body-name: body
+
+    patch:
+      tags:
+      - Voucher
+      security:
+        - bearerAuth: []
+      summary: Update Voucher by Id [Role Admin]
+      operationId: updateOneVoucher
+      parameters:
+      - name: Voucher id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: Can update one of properties's schema
+              $ref: '#components/schemas/Voucher'
+      responses:
+        200:
+          $ref: '#responses/200'
+        400:
+          $ref: '#responses/400'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Voucher
+      x-codegen-request-body-name: body
+    
+    delete:
+      tags:
+      - Voucher
+      security:
+        - bearerAuth: []
+      summary: Delete one Voucher by Id [Role Admin]
+      operationId: deleteOneVoucher
+      parameters:
+      - name: Voucher id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+      responses:
+        200:
+          $ref: '#responses/200'
+        400:
+          $ref: '#responses/400'
+        404:
+          $ref: '#responses/404'
+        500:
+          $ref: '#responses/500'
+      x-swagger-router-controller: Voucher
+      x-codegen-request-body-name: body
+
+
+
+
+
+
+####COMPONENTS
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone:
+          type: string
+        isAdmin:
+          type: boolean
+      example:
+        username: username
+        email: example@example.com
+        password: password123
+        phone: 123456789
+        isAdmin: false
+      xml:
+        name: User
+    
+    Product:
+      type: object
+      properties:
+        name:
+          type: string
+        price:
+          type: number
+        barcode:
+          type: string
+        categories:
+          type: string
+        weight:
+          type: number
+        quantity:
+          type: number
+        description:
+          type: string
+        brand:
+          type: string
+      
+      xml:
+        name: Product   
+    
+        
+    Order:
+      type: object
+      properties:
+        items:
+          type: array
+          properties:
+            productId:
+              type: string
+            quantity:
+              type: number
+        address:
+          type: string
+        voucher:
+          type: string
+      xml:
+        name: Order   
+    
+    FlashSale:
+      type: objecet
+      properties:
+        name: 
+          type: string
+        productId:
+          type: array
+        quantity:
+          type: number
+        discountPercent: 
+          type: number
+        timeStart: 
+          type: string
+        duration:
+          type: string
+      xml:
+        name: Flash Sale   
+
+    Voucher:
+      type: object
+      properties:
+        code: 
+          type: string
+        quantity:
+          type: number
+        discount:
+          type: number
+        timeStart:
+          type: string
+        timeEnd:
+          type: string
+      xml:
+        name: Voucher
+
+    login:
+      required: [username, password]
+      properties:
+        username:
+          type: string
+          minLength: 1
+        password:
+          type: string
+          minLength: 1
+    
+  
+
+  securitySchemes:
+    bearerAuth:            
+      type: http
+      scheme: bearer
+      bearerFormat: JWT  
+
+responses:
+  200:
+    description: Success.
+  201:
+    description: Success.
+  400:
+    description: Invalid username supplied
+  401:
+    description: Unauthenticated.
+    schema:
+      type: object
+      required: ['message']
+      properties:
+        message:
+          type: string
+  403:
+    description: Forbidden.
+    schema:
+      type: object
+      required: ["message"]
+      properties:
+        message:
+          type: string
+  404:
+    description: Not found.
+    schema: 
+      type: object
+      required: ["message"]
+      properties:
+        message:
+          type: string
+  422:
+    description: Login Invalid.
+    schema: 
+      type: object
+      required: ["message"]
+      properties:
+        message:
+          type: string
+  500:
+    description: Server Error.
+
+  UnauthorizedError:
+    description: Access token is missing or invalid

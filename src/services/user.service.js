@@ -13,7 +13,7 @@ import QueryFeatures from "../ultils/queryFeatures";
 
 export const createUserService = async (req) => {
   const res = {
-    statusCode: 200,
+    statusCode: 201,
     message: "Created User success!",
     data: {},
   };
