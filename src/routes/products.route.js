@@ -12,6 +12,7 @@ import { productValidator } from "../controllers/product/product.validator";
 import { verifyToken } from "../middlewares/authToken";
 import { checkAdminRole } from "../middlewares/checkRole";
 import { resizeProductPhoto, uploadProductPhoto } from "../middlewares/photo";
+import { validatorRequest } from "../middlewares/validator";
 
 const router = express.Router();
 
@@ -24,6 +25,7 @@ export default (confixRouter) => {
       verifyToken,
       checkAdminRole,
       productValidator,
+      validatorRequest,
       createOneProduct
     )
     .get("/", getAllProducts)

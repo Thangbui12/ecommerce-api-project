@@ -10,7 +10,6 @@ export const verifyToken = async (req, res, next) => {
   }
 
   try {
-    // console.log(procee.env.JWT_EXPIRES_IN);
     const user = jwt.verify(accessToken, process.env.JWT_SECRET_KEY);
     req.user = user;
 

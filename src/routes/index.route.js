@@ -13,6 +13,9 @@ import categoryRoute from "./category.route";
 import orderRoute from "./order.route";
 import flashSaleRoute from "./flashSale.route";
 import voucherRoute from "./voucher.route";
+import { validatorRequest } from "../middlewares/validator";
+
+import { body, check } from "express-validator";
 //Router
 const router = express.Router();
 
@@ -26,7 +29,7 @@ export default (app) => {
   //Authentication
 
   router
-    .post("/register", createUserValidator, createUser)
+    .post("/register", createUserValidator, validatorRequest, createUser)
     .post("/login", loginUser)
     .put("/forgot-password", forgotPassword)
     .post("/reset-password/:token", resetPassword);

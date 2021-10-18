@@ -1157,6 +1157,9 @@ components:
         password:
           type: string
           minLength: 1
+      example:
+        username: username
+        password: password123
     
   
 

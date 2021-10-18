@@ -1,13 +1,15 @@
-import { body, check, validationResult } from "express-validator";
+import { body, check } from "express-validator";
 
 export const createUserValidator = [
-  check("username")
+  body("username")
     .not()
     .isEmpty()
     .isLength(7)
+    .withMessage("Username minLength 7")
+    .bail()
     .isAlphanumeric()
     .withMessage("Username is required"),
-  check("password")
+  body("password")
     .not()
     .isEmpty()
     .withMessage("Password is required")
@@ -15,7 +17,7 @@ export const createUserValidator = [
     .withMessage("Password is too short")
     .matches(/\d/)
     .withMessage("Password must contain number"),
-  check("email")
+  body("email")
     .notEmpty()
     .withMessage("Email is required")
     .isEmail()

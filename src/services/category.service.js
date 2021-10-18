@@ -77,7 +77,6 @@ export const getOneCategoryService = async (params) => {
   const { id } = await params;
   try {
     const category = await Category.findById(id);
-    console.log(category);
     if (!category) {
       return {
         statusCode: 404,

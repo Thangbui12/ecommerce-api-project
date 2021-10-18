@@ -10,11 +10,9 @@ export const sendMailCron = async () => {
   const flashSales = await FlashSale.find().select(
     "name productId discountPercent timeStart timeEnd"
   );
-  // console.log(flashSales);
   const users = await User.find()
     .select({ isAdmin: false })
     .select("username email phone");
-  // console.log(users);
 
   flashSales.map(async (item) => {
     const timeStart = moment(item.timeStart).subtract(15, "minutes");

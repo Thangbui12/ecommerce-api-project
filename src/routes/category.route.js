@@ -12,6 +12,7 @@ import { createCategoryValidator } from "../controllers/category/category.valida
 import { verifyToken } from "../middlewares/authToken";
 import { checkAdminRole } from "../middlewares/checkRole";
 import { resizeBanner, uploadBanner } from "../middlewares/photo";
+import { validatorRequest } from "../middlewares/validator";
 
 const router = express.Router();
 
@@ -19,7 +20,12 @@ export default (confixRouter) => {
   confixRouter.use("/categories", verifyToken, checkAdminRole, router);
 
   router
-    .post("/create-category", createCategoryValidator, createCategory)
+    .post(
+      "/create-category",
+      createCategoryValidator,
+      validatorRequest,
+      createCategory
+    )
     .get("/", getAllCategories)
     .get("/:id", getOneCategory)
     .patch("/:id", updateOneCategory)
