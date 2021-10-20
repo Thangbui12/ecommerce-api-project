@@ -65,7 +65,7 @@ export const loginUserService = async (req) => {
     message: "Login success!",
     data: {},
   };
-  let { username, password, email } = await req.body;
+  const { username, password, email } = await req.body;
   const result = !!username ? { username: username } : { email: email };
   try {
     const user = await User.findOne(result);
