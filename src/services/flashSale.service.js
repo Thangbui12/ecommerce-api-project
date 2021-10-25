@@ -18,10 +18,6 @@ export const createFlashSaleService = async (req) => {
     req.body;
   const flashSaleId = mongoose.Types.ObjectId();
 
-  //time: 2021-10-09 09:30:26.123 (yeart-month-day hour-minute-second.minisecond)
-  //duration : 2days-2d 20minutes-20m 20seconds-20s 2hours-2h 2months-2M 2years-2y Quanter-Q
-  //moment('24/12/2019 09:15:00', "DD MM YYYY hh:mm:ss", true);
-
   const timeStartCoverted = moment(timeStart);
   const timeEndConverted = timeStartCoverted.add(
     _.split(duration, "", 2)[0],
@@ -37,9 +33,6 @@ export const createFlashSaleService = async (req) => {
         message: "Flash sale existed!",
       };
     }
-
-    //check & delete productId if req.body.productId existed in another FlashSale before create the new
-    //New Flash Sale
     const flashSaleRequired = {
       _id: flashSaleId,
       name,
